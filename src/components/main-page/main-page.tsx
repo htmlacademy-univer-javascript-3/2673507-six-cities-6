@@ -1,17 +1,21 @@
-import PlaceCard from '../place-card/place-card';
+import PlacesList from '../places-list/places-list';
+import { Offer } from '../../types/offer';
 
 type MainPageProps = {
-  placesCount: number;
+  offers: Offer[];
 };
 
-function MainPage({ placesCount }: MainPageProps): JSX.Element {
+function MainPage({ offers }: MainPageProps): JSX.Element {
   return (
     <div className="page page--gray page--main">
       <header className="header">
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <a className="header__logo-link header__logo-link--active">
+              <a
+                className="header__logo-link header__logo-link--active"
+                href="/"
+              >
                 <img
                   className="header__logo"
                   src="img/logo.svg"
@@ -89,7 +93,7 @@ function MainPage({ placesCount }: MainPageProps): JSX.Element {
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">
-                {placesCount} places to stay in Amsterdam
+                {offers.length} places to stay in Amsterdam
               </b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
@@ -117,50 +121,7 @@ function MainPage({ placesCount }: MainPageProps): JSX.Element {
                   </li>
                 </ul>
               </form>
-              <div className="cities__places-list places__list tabs__content">
-                <PlaceCard
-                  isPremium
-                  imageSrc="img/apartment-01.jpg"
-                  price={120}
-                  rating={80}
-                  title="Beautiful & luxurious apartment at great location"
-                  type="Apartment"
-                  isFavorite={false}
-                />
-                <PlaceCard
-                  imageSrc="img/room.jpg"
-                  price={80}
-                  rating={80}
-                  title="Wood and stone place"
-                  type="Room"
-                  isFavorite
-                />
-                <PlaceCard
-                  imageSrc="img/apartment-02.jpg"
-                  price={132}
-                  rating={80}
-                  title="Canal View Prinsengracht"
-                  type="Apartment"
-                  isFavorite={false}
-                />
-                <PlaceCard
-                  isPremium
-                  imageSrc="img/apartment-03.jpg"
-                  price={180}
-                  rating={100}
-                  title="Nice, cozy, warm big bed apartment"
-                  type="Apartment"
-                  isFavorite={false}
-                />
-                <PlaceCard
-                  imageSrc="img/room.jpg"
-                  price={80}
-                  rating={80}
-                  title="Wood and stone place"
-                  type="Room"
-                  isFavorite
-                />
-              </div>
+              <PlacesList offers={offers} />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map"></section>
