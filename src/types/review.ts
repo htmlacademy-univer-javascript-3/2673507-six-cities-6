@@ -6,7 +6,7 @@ export type Review = {
     avatarUrl: string;
     isPro: boolean;
   };
-  rating: number; // 0-5
+  rating: number;
   comment: string;
-  date: string; // ISO string
+  date: string;
 };

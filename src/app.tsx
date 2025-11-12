@@ -5,20 +5,21 @@ import FavoritesPage from './components/favorites-page/favorites-page';
 import OfferPage from './components/offer-page/offer-page';
 import NotFoundPage from './components/not-found-page/not-found-page';
 import PrivateRoute from './components/private-route/private-route';
-import { Offer } from './types/offer';
 import { Review } from './types/review';
+import { useSelector } from 'react-redux';
+import { RootState } from './store';
 
 type AppProps = {
-  offers: Offer[];
   reviews: Review[];
 };
 
-function App({ offers, reviews }: AppProps): JSX.Element {
+function App({ reviews }: AppProps): JSX.Element {
+  const offers = useSelector((state: RootState) => state.offers);
   const isAuthorized = false;
 
   return (
     <Routes>
-      <Route path="/" element={<MainPage offers={offers} />} />
+      <Route path="/" element={<MainPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/favorites"
