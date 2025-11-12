@@ -6,12 +6,14 @@ import OfferPage from './components/offer-page/offer-page';
 import NotFoundPage from './components/not-found-page/not-found-page';
 import PrivateRoute from './components/private-route/private-route';
 import { Offer } from './types/offer';
+import { Review } from './types/review';
 
 type AppProps = {
   offers: Offer[];
+  reviews: Review[];
 };
 
-function App({ offers }: AppProps): JSX.Element {
+function App({ offers, reviews }: AppProps): JSX.Element {
   const isAuthorized = false;
 
   return (
@@ -28,7 +30,10 @@ function App({ offers }: AppProps): JSX.Element {
           </PrivateRoute>
         }
       />
-      <Route path="/offer/:id" element={<OfferPage offers={offers} />} />
+      <Route
+        path="/offer/:id"
+        element={<OfferPage offers={offers} reviews={reviews} />}
+      />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
