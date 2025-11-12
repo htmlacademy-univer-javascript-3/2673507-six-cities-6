@@ -1,13 +1,17 @@
 import { useParams, Navigate } from 'react-router-dom';
 import PlaceCard from '../place-card/place-card';
 import ReviewForm from '../review-form/review-form';
+import ReviewsList from '../reviews-list/reviews-list';
+import Map from '../map/map';
 import { Offer } from '../../types/offer';
+import { Review } from '../../types/review';
 
 type OfferPageProps = {
   offers: Offer[];
+  reviews: Review[];
 };
 
-function OfferPage({ offers }: OfferPageProps): JSX.Element {
+function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const offer = offers.find((o) => o.id === id);
 
@@ -18,6 +22,8 @@ function OfferPage({ offers }: OfferPageProps): JSX.Element {
   const nearPlaces = offers
     .filter((o) => o.id !== offer.id && o.city.name === offer.city.name)
     .slice(0, 3);
+
+  const offerReviews = reviews.filter((r) => r.offerId === offer.id);
 
   return (
     <div className="page">
@@ -163,17 +169,13 @@ function OfferPage({ offers }: OfferPageProps): JSX.Element {
                   <p className="offer__text">{offer.description}</p>
                 </div>
               </div>
-              <section className="offer__reviews reviews">
-                <h2 className="reviews__title">
-                  Reviews &middot; <span className="reviews__amount">0</span>
-                </h2>
-                <ul className="reviews__list">
-                </ul>
-                <ReviewForm />
-              </section>
+              <ReviewsList reviews={offerReviews} />
+              <ReviewForm />
             </div>
           </div>
-          <section className="offer__map map"></section>
+          <section className="offer__map map">
+            <Map offers={nearPlaces} />
+          </section>
         </section>
         <div className="container">
           <section className="near-places places">
