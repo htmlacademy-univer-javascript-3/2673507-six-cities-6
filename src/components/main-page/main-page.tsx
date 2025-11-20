@@ -3,13 +3,29 @@ import Map from '../map/map';
 import CitiesList from '../cities-list/cities-list';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import SortOptions, { SortType } from '../sort-options/sort-options';
 function MainPage(): JSX.Element {
   const city = useSelector((state: RootState) => state.city);
   const allOffers = useSelector((state: RootState) => state.offers);
   const offers = allOffers.filter((o) => o.city.name === city);
+  const [sort, setSort] = useState<SortType>('Popular');
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 
-  const [isOpenListSort, setIsOpenListSort] = useState<boolean>(false);
+  const sortedOffers = useMemo(() => {
+    const arr = offers.slice();
+    switch (sort) {
+      case 'Price: low to high':
+        return arr.sort((a, b) => a.price - b.price);
+      case 'Price: high to low':
+        return arr.sort((a, b) => b.price - a.price);
+      case 'Top rated first':
+        return arr.sort((a, b) => b.rating - a.rating);
+      case 'Popular':
+      default:
+        return offers;
+    }
+  }, [offers, sort]);
 
   return (
     <div className="page page--gray page--main">
@@ -63,50 +79,14 @@ function MainPage(): JSX.Element {
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">
-                {offers.length} places to stay in {city}
+                {sortedOffers.length} places to stay in {city}
               </b>
-              <form className="places__sorting" action="#" method="get">
-                <span className="places__sorting-caption">Sort by</span>
-                <span className="places__sorting-type" tabIndex={0}>
-                  Popular
-                  <span
-                    className="places__sorting-type"
-                    tabIndex={0}
-                    onClick={() => setIsOpenListSort((v: boolean) => !v)}
-                  >
-                    Popular
-                    <svg className="places__sorting-arrow" width="7" height="4">
-                      <use href="#icon-arrow-select"></use>
-                    </svg>
-                  </span>
-                </span>
-                <ul
-                  className={`places__options places__options--custom ${
-                    isOpenListSort ? 'places__options--opened' : ''
-                  }`}
-                >
-                  <li
-                    className="places__option places__option--active"
-                    tabIndex={0}
-                  >
-                    Popular
-                  </li>
-                  <li className="places__option" tabIndex={0}>
-                    Price: low to high
-                  </li>
-                  <li className="places__option" tabIndex={0}>
-                    Price: high to low
-                  </li>
-                  <li className="places__option" tabIndex={0}>
-                    Top rated first
-                  </li>
-                </ul>
-              </form>
-              <PlacesList offers={offers} />
+              <SortOptions value={sort} onChange={setSort} />
+              <PlacesList offers={sortedOffers} onActiveChange={setActiveOfferId} />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
-                <Map offers={offers} />
+                <Map offers={sortedOffers} activeOfferId={activeOfferId} />
               </section>
             </div>
           </div>
