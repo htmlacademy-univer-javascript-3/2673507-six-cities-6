@@ -8,9 +8,10 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
 type MapProps = {
   offers: Offer[];
+  activeOfferId?: string | null;
 };
 
-function Map({ offers }: MapProps): JSX.Element | null {
+function Map({ offers, activeOfferId }: MapProps): JSX.Element | null {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
@@ -48,12 +49,18 @@ function Map({ offers }: MapProps): JSX.Element | null {
       iconAnchor: [12, 41],
     });
 
+    const activeIcon = new Icon({
+      iconUrl: '/img/pin-active.svg',
+      iconSize: [27, 39],
+      iconAnchor: [13, 39],
+    });
+
     markersLayer.clearLayers();
 
     offers.forEach((offer) => {
       const marker = L.marker(
         [offer.location.latitude, offer.location.longitude],
-        { icon: defaultIcon }
+        { icon: offer.id === activeOfferId ? activeIcon : defaultIcon }
       );
       marker.addTo(markersLayer);
     });
@@ -62,7 +69,7 @@ function Map({ offers }: MapProps): JSX.Element | null {
       [city.location.latitude, city.location.longitude],
       city.location.zoom
     );
-  }, [offers]);
+  }, [offers, activeOfferId]);
 
   return <div ref={mapRef} style={{ height: '100%' }} />;
 }
