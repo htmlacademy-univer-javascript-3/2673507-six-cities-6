@@ -1,29 +1,54 @@
+import { useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import PlaceCard from '../place-card/place-card';
 import ReviewForm from '../review-form/review-form';
 import ReviewsList from '../reviews-list/reviews-list';
 import Map from '../map/map';
-import { Offer } from '../../types/offer';
-import { Review } from '../../types/review';
+import Spinner from '../spinner/spinner';
+import { RootState, AppDispatch } from '../../store';
+import {
+  fetchOfferAction,
+  fetchNearbyOffersAction,
+  fetchCommentsAction,
+} from '../../store/api-actions';
 
-type OfferPageProps = {
-  offers: Offer[];
-  reviews: Review[];
-};
-
-function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
+function OfferPage(): JSX.Element | null {
   const { id } = useParams<{ id: string }>();
-  const offer = offers.find((o) => o.id === id);
+  const dispatch = useDispatch<AppDispatch>();
 
-  if (!offer) {
-    return <Navigate to="/" replace />;
+  const {
+    currentOffer: offer,
+    isCurrentOfferLoading,
+    isCurrentOfferNotFound,
+    nearbyOffers,
+    reviews,
+    authorizationStatus,
+  } = useSelector((state: RootState) => state);
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+
+    dispatch(fetchOfferAction(id));
+    dispatch(fetchNearbyOffersAction(id));
+    dispatch(fetchCommentsAction(id));
+  }, [dispatch, id]);
+
+  if (isCurrentOfferLoading || !id) {
+    return <Spinner />;
   }
 
-  const nearPlaces = offers
-    .filter((o) => o.id !== offer.id && o.city.name === offer.city.name)
-    .slice(0, 3);
+  if (isCurrentOfferNotFound) {
+    return <Navigate to="*" replace />;
+  }
 
-  const offerReviews = reviews.filter((r) => r.offerId === offer.id);
+  if (!offer) {
+    return null;
+  }
+
+  const nearPlaces = nearbyOffers;
 
   return (
     <div className="page">
@@ -111,8 +136,7 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
                 <div className="offer__stars rating__stars">
                   <span
                     style={{ width: `${(offer.rating / 5) * 100}%` }}
-                  >
-                  </span>
+                  ></span>
                   <span className="visually-hidden">Rating</span>
                 </div>
                 <span className="offer__rating-value rating__value">
@@ -169,8 +193,10 @@ function OfferPage({ offers, reviews }: OfferPageProps): JSX.Element {
                   <p className="offer__text">{offer.description}</p>
                 </div>
               </div>
-              <ReviewsList reviews={offerReviews} />
-              <ReviewForm />
+              <ReviewsList reviews={reviews} />
+              {authorizationStatus === 'Auth' && (
+                <ReviewForm offerId={offer.id} />
+              )}
             </div>
           </div>
           <section className="offer__map map">
