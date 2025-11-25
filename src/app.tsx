@@ -5,15 +5,10 @@ import FavoritesPage from './components/favorites-page/favorites-page';
 import OfferPage from './components/offer-page/offer-page';
 import NotFoundPage from './components/not-found-page/not-found-page';
 import PrivateRoute from './components/private-route/private-route';
-import { Review } from './types/review';
 import { useSelector } from 'react-redux';
 import { RootState } from './store';
 
-type AppProps = {
-  reviews: Review[];
-};
-
-function App({ reviews }: AppProps): JSX.Element {
+function App(): JSX.Element {
   const offers = useSelector((state: RootState) => state.offers);
 
   return (
@@ -30,10 +25,7 @@ function App({ reviews }: AppProps): JSX.Element {
           </PrivateRoute>
         }
       />
-      <Route
-        path="/offer/:id"
-        element={<OfferPage offers={offers} reviews={reviews} />}
-      />
+      <Route path="/offer/:id" element={<OfferPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

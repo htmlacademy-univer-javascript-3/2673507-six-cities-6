@@ -1,8 +1,20 @@
 import { useState, FormEvent, ChangeEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../../store';
+import { postCommentAction } from '../../store/api-actions';
 
-function ReviewForm(): JSX.Element {
+type ReviewFormProps = {
+  offerId: string;
+};
+
+function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
   const [rating, setRating] = useState<string>('');
   const [comment, setComment] = useState<string>('');
+
+  const dispatch = useDispatch<AppDispatch>();
+  const isReviewPosting = useSelector(
+    (state: RootState) => state.isReviewPosting
+  );
 
   const handleRatingChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setRating(evt.target.value);
@@ -14,9 +26,24 @@ function ReviewForm(): JSX.Element {
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    if (!rating || comment.length < 50 || isReviewPosting) {
+      return;
+    }
+
+    dispatch(
+      postCommentAction({
+        offerId,
+        comment,
+        rating: Number(rating),
+      })
+    );
+
+    setRating('');
+    setComment('');
   };
 
-  const isSubmitDisabled = !rating || comment.length < 50;
+  const isSubmitDisabled = !rating || comment.length < 50 || isReviewPosting;
 
   return (
     <form
@@ -131,8 +158,7 @@ function ReviewForm(): JSX.Element {
         placeholder="Tell how was your stay, what you like and what can be improved"
         value={comment}
         onChange={handleCommentChange}
-      >
-      </textarea>
+      ></textarea>
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
           To submit review please make sure to set{' '}
