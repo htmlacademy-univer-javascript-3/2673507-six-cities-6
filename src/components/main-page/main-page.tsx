@@ -3,11 +3,16 @@ import Map from '../map/map';
 import CitiesList from '../cities-list/cities-list';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import Spinner from '../spinner/spinner';
 import { useMemo, useState } from 'react';
 import SortOptions, { SortType } from '../sort-options/sort-options';
+
 function MainPage(): JSX.Element {
   const city = useSelector((state: RootState) => state.city);
   const allOffers = useSelector((state: RootState) => state.offers);
+  const isOffersLoading = useSelector(
+    (state: RootState) => state.isOffersLoading
+  );
   const offers = allOffers.filter((o) => o.city.name === city);
   const [sort, setSort] = useState<SortType>('Popular');
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -26,6 +31,10 @@ function MainPage(): JSX.Element {
         return offers;
     }
   }, [offers, sort]);
+
+  if (isOffersLoading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="page page--gray page--main">
@@ -82,7 +91,10 @@ function MainPage(): JSX.Element {
                 {sortedOffers.length} places to stay in {city}
               </b>
               <SortOptions value={sort} onChange={setSort} />
-              <PlacesList offers={sortedOffers} onActiveChange={setActiveOfferId} />
+              <PlacesList
+                offers={sortedOffers}
+                onActiveChange={setActiveOfferId}
+              />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
