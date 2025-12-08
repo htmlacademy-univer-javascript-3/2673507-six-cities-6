@@ -6,25 +6,31 @@ import ReviewForm from '../review-form/review-form';
 import ReviewsList from '../reviews-list/reviews-list';
 import Map from '../map/map';
 import Spinner from '../spinner/spinner';
-import { RootState, AppDispatch } from '../../store';
+import { AppDispatch } from '../../store';
 import {
   fetchOfferAction,
   fetchNearbyOffersAction,
   fetchCommentsAction,
 } from '../../store/api-actions';
+import {
+  selectAuthorizationStatus,
+  selectCurrentOffer,
+  selectIsCurrentOfferLoading,
+  selectIsCurrentOfferNotFound,
+  selectNearbyOffers,
+  selectReviews,
+} from '../../store/selectors';
 
 function OfferPage(): JSX.Element | null {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
 
-  const {
-    currentOffer: offer,
-    isCurrentOfferLoading,
-    isCurrentOfferNotFound,
-    nearbyOffers,
-    reviews,
-    authorizationStatus,
-  } = useSelector((state: RootState) => state);
+  const offer = useSelector(selectCurrentOffer);
+  const isCurrentOfferLoading = useSelector(selectIsCurrentOfferLoading);
+  const isCurrentOfferNotFound = useSelector(selectIsCurrentOfferNotFound);
+  const nearbyOffers = useSelector(selectNearbyOffers);
+  const reviews = useSelector(selectReviews);
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
 
   useEffect(() => {
     if (!id) {

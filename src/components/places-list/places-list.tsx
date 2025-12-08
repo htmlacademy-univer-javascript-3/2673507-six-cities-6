@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react';
 import PlaceCard from '../place-card/place-card';
 import { Offer } from '../../types/offer';
 
@@ -14,9 +15,12 @@ function PlacesList({
   imageWrapperClassName,
   onActiveChange,
 }: PlacesListProps): JSX.Element {
-  const handleCardHover = (offerId: string | null) => {
-    onActiveChange?.(offerId);
-  };
+  const handleCardHover = useCallback(
+    (offerId: string | null) => {
+      onActiveChange?.(offerId);
+    },
+    [onActiveChange]
+  );
 
   return (
     <div className="cities__places-list places__list tabs__content">
@@ -33,4 +37,6 @@ function PlacesList({
   );
 }
 
-export default PlacesList;
+const MemoizedPlacesList = memo(PlacesList);
+
+export default MemoizedPlacesList;

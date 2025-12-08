@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import L, { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Offer } from '../../types/offer';
@@ -74,4 +74,6 @@ function Map({ offers, activeOfferId }: MapProps): JSX.Element | null {
   return <div ref={mapRef} style={{ height: '100%' }} />;
 }
 
-export default Map;
+const MemoizedMap = memo(Map);
+
+export default MemoizedMap;

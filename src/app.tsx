@@ -6,10 +6,10 @@ import OfferPage from './components/offer-page/offer-page';
 import NotFoundPage from './components/not-found-page/not-found-page';
 import PrivateRoute from './components/private-route/private-route';
 import { useSelector } from 'react-redux';
-import { RootState } from './store';
+import { selectFavorites } from './store/selectors';
 
 function App(): JSX.Element {
-  const offers = useSelector((state: RootState) => state.offers);
+  const favoriteOffers = useSelector(selectFavorites);
 
   return (
     <Routes>
@@ -19,9 +19,7 @@ function App(): JSX.Element {
         path="/favorites"
         element={
           <PrivateRoute>
-            <FavoritesPage
-              offers={offers.filter((offer) => offer.isFavorite)}
-            />
+            <FavoritesPage offers={favoriteOffers} />
           </PrivateRoute>
         }
       />

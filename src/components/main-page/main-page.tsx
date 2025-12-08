@@ -2,26 +2,29 @@ import PlacesList from '../places-list/places-list';
 import Map from '../map/map';
 import CitiesList from '../cities-list/cities-list';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../../store';
+import { AppDispatch } from '../../store';
 import Spinner from '../spinner/spinner';
 import { useMemo, useState } from 'react';
 import SortOptions, { SortType } from '../sort-options/sort-options';
 import { Link } from 'react-router-dom';
 import { logoutAction } from '../../store/api-actions';
+import {
+  selectAuthorizationStatus,
+  selectCity,
+  selectFavoriteCount,
+  selectOffersByCity,
+  selectUserEmail,
+  selectIsOffersLoading,
+} from '../../store/selectors';
 
 function MainPage(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
-  const city = useSelector((state: RootState) => state.city);
-  const allOffers = useSelector((state: RootState) => state.offers);
-  const isOffersLoading = useSelector(
-    (state: RootState) => state.isOffersLoading
-  );
-  const authorizationStatus = useSelector(
-    (state: RootState) => state.authorizationStatus
-  );
-  const userEmail = useSelector((state: RootState) => state.userEmail);
-  const offers = allOffers.filter((o) => o.city.name === city);
-  const favoriteCount = allOffers.filter((o) => o.isFavorite).length;
+  const city = useSelector(selectCity);
+  const offers = useSelector(selectOffersByCity);
+  const isOffersLoading = useSelector(selectIsOffersLoading);
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const userEmail = useSelector(selectUserEmail);
+  const favoriteCount = useSelector(selectFavoriteCount);
   const [sort, setSort] = useState<SortType>('Popular');
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 

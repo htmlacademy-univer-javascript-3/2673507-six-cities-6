@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import PlaceCard from '../place-card/place-card';
 import { Offer } from '../../types/offer';
 
@@ -8,14 +9,18 @@ type FavoritesPageProps = {
 function FavoritesPage({ offers }: FavoritesPageProps): JSX.Element {
   const favoritesCount = offers.length;
 
-  const offersByCity = offers.reduce((acc, offer) => {
-    const cityName = offer.city.name;
-    if (!acc[cityName]) {
-      acc[cityName] = [];
-    }
-    acc[cityName].push(offer);
-    return acc;
-  }, {} as Record<string, Offer[]>);
+  const offersByCity = useMemo(
+    () =>
+      offers.reduce((acc, offer) => {
+        const cityName = offer.city.name;
+        if (!acc[cityName]) {
+          acc[cityName] = [];
+        }
+        acc[cityName].push(offer);
+        return acc;
+      }, {} as Record<string, Offer[]>),
+    [offers]
+  );
 
   return (
     <div className="page">
