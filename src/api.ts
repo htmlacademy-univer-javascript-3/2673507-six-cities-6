@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestHeaders } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 
 const BACKEND_URL = 'https://14.design.htmlacademy.pro';
 const REQUEST_TIMEOUT = 5000;
@@ -25,7 +25,7 @@ export const createAPI = (): AxiosInstance => {
     const token = getToken();
 
     if (token) {
-      const headers = (config.headers ?? {}) as AxiosRequestHeaders;
+      const headers = (config.headers ?? {});
       headers['X-Token'] = token;
       config.headers = headers;
     }

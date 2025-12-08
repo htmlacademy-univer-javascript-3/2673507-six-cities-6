@@ -87,7 +87,7 @@ function MainPage(): JSX.Element {
                       <button
                         className="header__nav-link"
                         style={{ background: 'none', border: 'none' }}
-                        onClick={() => dispatch(logoutAction())}
+                        onClick={() => void dispatch(logoutAction())}
                       >
                         <span className="header__signout">Sign out</span>
                       </button>

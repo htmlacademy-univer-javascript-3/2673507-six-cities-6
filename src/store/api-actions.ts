@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
 import { Offer } from '../types/offer';
+import { Review } from '../types/review';
 import { AppDispatch, RootState } from '.';
 import { requireAuthorization, setUserEmail } from './action';
 import { dropToken, saveToken } from '../api';
@@ -62,6 +63,53 @@ export const loginAction = createAsyncThunk<void, AuthData, ThunkApiConfig>(
     dispatch(requireAuthorization('Auth'));
   }
 );
+
+export const fetchOfferAction = createAsyncThunk<Offer, string, ThunkApiConfig>(
+  'offer/fetchOffer',
+  async (offerId, { extra: api }) => {
+    const { data } = await api.get<Offer>(`/six-cities/offers/${offerId}`);
+    return data;
+  }
+);
+
+export const fetchNearbyOffersAction = createAsyncThunk<
+  Offer[],
+  string,
+  ThunkApiConfig
+>('offer/fetchNearbyOffers', async (offerId, { extra: api }) => {
+  const { data } = await api.get<Offer[]>(
+    `/six-cities/offers/${offerId}/nearby`
+  );
+  return data;
+});
+
+export const fetchCommentsAction = createAsyncThunk<
+  Review[],
+  string,
+  ThunkApiConfig
+>('offer/fetchComments', async (offerId, { extra: api }) => {
+  const { data } = await api.get<Review[]>(`/six-cities/comments/${offerId}`);
+  return data;
+});
+
+type PostCommentData = {
+  offerId: string;
+  comment: string;
+  rating: number;
+};
+
+export const postCommentAction = createAsyncThunk<
+  Review,
+  PostCommentData,
+  ThunkApiConfig
+>('offer/postComment', async ({ offerId, comment, rating }, { extra: api }) => {
+  const { data } = await api.post<Review>(`/six-cities/comments/${offerId}`, {
+    comment,
+    rating,
+  });
+
+  return data;
+});
 
 export const logoutAction = createAsyncThunk<void, undefined, ThunkApiConfig>(
   'user/logout',
