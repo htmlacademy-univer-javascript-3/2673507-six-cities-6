@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import PlaceCard from '../place-card/place-card';
 import ReviewForm from '../review-form/review-form';
@@ -11,6 +11,8 @@ import {
   fetchOfferAction,
   fetchNearbyOffersAction,
   fetchCommentsAction,
+  logoutAction,
+  toggleFavoriteStatusAction,
 } from '../../store/api-actions';
 import {
   selectAuthorizationStatus,
@@ -19,11 +21,14 @@ import {
   selectIsCurrentOfferNotFound,
   selectNearbyOffers,
   selectReviews,
+  selectUserEmail,
+  selectFavoriteCount,
 } from '../../store/selectors';
 
 function OfferPage(): JSX.Element | null {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const offer = useSelector(selectCurrentOffer);
   const isCurrentOfferLoading = useSelector(selectIsCurrentOfferLoading);
@@ -31,6 +36,8 @@ function OfferPage(): JSX.Element | null {
   const nearbyOffers = useSelector(selectNearbyOffers);
   const reviews = useSelector(selectReviews);
   const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const userEmail = useSelector(selectUserEmail);
+  const favoriteCount = useSelector(selectFavoriteCount);
 
   useEffect(() => {
     if (!id) {
@@ -55,6 +62,17 @@ function OfferPage(): JSX.Element | null {
   }
 
   const nearPlaces = nearbyOffers;
+  const isAuth = authorizationStatus === 'Auth';
+
+  const handleBookmarkClick = () => {
+    if (authorizationStatus !== 'Auth') {
+      navigate('/login');
+      return;
+    }
+
+    const status = offer.isFavorite ? 0 : 1;
+    dispatch(toggleFavoriteStatusAction({ offerId: offer.id, status }));
+  };
 
   return (
     <div className="page">
@@ -62,7 +80,7 @@ function OfferPage(): JSX.Element | null {
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <a className="header__logo-link" href="/">
+              <Link className="header__logo-link" to="/">
                 <img
                   className="header__logo"
                   src="img/logo.svg"
@@ -70,27 +88,47 @@ function OfferPage(): JSX.Element | null {
                   width="81"
                   height="41"
                 />
-              </a>
+              </Link>
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a
-                    className="header__nav-link header__nav-link--profile"
-                    href="#"
-                  >
-                    <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                    <span className="header__user-name user__name">
-                      Oliver.conner@gmail.com
-                    </span>
-                    <span className="header__favorite-count">3</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
+                {isAuth ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <Link
+                        className="header__nav-link header__nav-link--profile"
+                        to="/favorites"
+                      >
+                        <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                        <span className="header__user-name user__name">
+                          {userEmail}
+                        </span>
+                        <span className="header__favorite-count">
+                          {favoriteCount}
+                        </span>
+                      </Link>
+                    </li>
+                    <li className="header__nav-item">
+                      <button
+                        className="header__nav-link"
+                        style={{ background: 'none', border: 'none' }}
+                        onClick={() => void dispatch(logoutAction())}
+                      >
+                        <span className="header__signout">Sign out</span>
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item user">
+                    <Link
+                      className="header__nav-link header__nav-link--profile"
+                      to="/login"
+                    >
+                      <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                      <span className="header__login">Sign in</span>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
@@ -129,6 +167,7 @@ function OfferPage(): JSX.Element | null {
                     offer.isFavorite ? 'offer__bookmark-button--active' : ''
                   } button`}
                   type="button"
+                  onClick={handleBookmarkClick}
                 >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use href="#icon-bookmark"></use>

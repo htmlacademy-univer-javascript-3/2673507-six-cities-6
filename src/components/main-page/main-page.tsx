@@ -16,6 +16,7 @@ import {
   selectUserEmail,
   selectIsOffersLoading,
 } from '../../store/selectors';
+import MainEmptyPage from '../main-empty-page/main-empty-page';
 
 function MainPage(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
@@ -48,6 +49,7 @@ function MainPage(): JSX.Element {
   }
 
   const isAuth = authorizationStatus === 'Auth';
+  const hasOffers = sortedOffers.length > 0;
 
   return (
     <div className="page page--gray page--main">
@@ -113,28 +115,36 @@ function MainPage(): JSX.Element {
         </div>
       </header>
 
-      <main className="page__main page__main--index">
+      <main
+        className={`page__main page__main--index ${
+          hasOffers ? '' : 'page__main--index-empty'
+        }`}
+      >
         <h1 className="visually-hidden">Cities</h1>
         <CitiesList />
         <div className="cities">
-          <div className="cities__places-container container">
-            <section className="cities__places places">
-              <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">
-                {sortedOffers.length} places to stay in {city}
-              </b>
-              <SortOptions value={sort} onChange={setSort} />
-              <PlacesList
-                offers={sortedOffers}
-                onActiveChange={setActiveOfferId}
-              />
-            </section>
-            <div className="cities__right-section">
-              <section className="cities__map map">
-                <Map offers={sortedOffers} activeOfferId={activeOfferId} />
+          {hasOffers ? (
+            <div className="cities__places-container container">
+              <section className="cities__places places">
+                <h2 className="visually-hidden">Places</h2>
+                <b className="places__found">
+                  {sortedOffers.length} places to stay in {city}
+                </b>
+                <SortOptions value={sort} onChange={setSort} />
+                <PlacesList
+                  offers={sortedOffers}
+                  onActiveChange={setActiveOfferId}
+                />
               </section>
+              <div className="cities__right-section">
+                <section className="cities__map map">
+                  <Map offers={sortedOffers} activeOfferId={activeOfferId} />
+                </section>
+              </div>
             </div>
-          </div>
+          ) : (
+            <MainEmptyPage city={city} />
+          )}
         </div>
       </main>
     </div>
