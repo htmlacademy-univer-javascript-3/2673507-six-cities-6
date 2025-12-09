@@ -1,6 +1,10 @@
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Offer } from '../../types/offer';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../../store';
+import { toggleFavoriteStatusAction } from '../../store/api-actions';
+import { selectAuthorizationStatus } from '../../store/selectors';
 
 type PlaceCardProps = {
   offer: Offer;
@@ -15,12 +19,26 @@ function PlaceCard({
   cardClassName = 'cities__card',
   imageWrapperClassName = 'cities__image-wrapper',
 }: PlaceCardProps): JSX.Element {
+  const dispatch = useDispatch<AppDispatch>();
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const navigate = useNavigate();
+
   const handleMouseEnter = () => {
     onCardHover?.(offer.id);
   };
 
   const handleMouseLeave = () => {
     onCardHover?.(null);
+  };
+
+  const handleBookmarkClick = () => {
+    if (authorizationStatus !== 'Auth') {
+      navigate('/login');
+      return;
+    }
+
+    const status = offer.isFavorite ? 0 : 1;
+    dispatch(toggleFavoriteStatusAction({ offerId: offer.id, status }));
   };
 
   return (
@@ -56,6 +74,7 @@ function PlaceCard({
               offer.isFavorite ? 'place-card__bookmark-button--active' : ''
             } button`}
             type="button"
+            onClick={handleBookmarkClick}
           >
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use href="#icon-bookmark"></use>

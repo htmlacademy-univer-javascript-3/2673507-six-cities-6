@@ -120,3 +120,32 @@ export const logoutAction = createAsyncThunk<void, undefined, ThunkApiConfig>(
     dispatch(requireAuthorization('NoAuth'));
   }
 );
+
+export const fetchFavoritesAction = createAsyncThunk<
+  Offer[],
+  undefined,
+  ThunkApiConfig
+>('favorites/fetchFavorites', async (_arg, { extra: api }) => {
+  const { data } = await api.get<Offer[]>('/six-cities/favorite');
+  return data;
+});
+
+type ToggleFavoriteData = {
+  offerId: string;
+  status: 0 | 1;
+};
+
+export const toggleFavoriteStatusAction = createAsyncThunk<
+  Offer,
+  ToggleFavoriteData,
+  ThunkApiConfig
+>(
+  'favorites/toggleFavoriteStatus',
+  async ({ offerId, status }, { extra: api }) => {
+    const { data } = await api.post<Offer>(
+      `/six-cities/favorite/${offerId}/${status}`
+    );
+
+    return data;
+  }
+);

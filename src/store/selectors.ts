@@ -3,6 +3,7 @@ import type { RootState } from './index';
 
 export const selectCity = (state: RootState) => state.city;
 export const selectOffers = (state: RootState) => state.offers;
+export const selectFavorites = (state: RootState) => state.favorites;
 export const selectIsOffersLoading = (state: RootState) =>
   state.isOffersLoading;
 export const selectAuthorizationStatus = (state: RootState) =>
@@ -22,16 +23,15 @@ export const selectAreReviewsLoading = (state: RootState) =>
   state.areReviewsLoading;
 export const selectIsReviewPosting = (state: RootState) =>
   state.isReviewPosting;
+export const selectAreFavoritesLoading = (state: RootState) =>
+  state.areFavoritesLoading;
 
 export const selectOffersByCity = createSelector(
   [selectOffers, selectCity],
   (offers, city) => offers.filter((o) => o.city.name === city)
 );
 
-export const selectFavoriteCount = createSelector([selectOffers], (offers) =>
-  offers.reduce((acc, o) => acc + (o.isFavorite ? 1 : 0), 0)
-);
-
-export const selectFavorites = createSelector([selectOffers], (offers) =>
-  offers.filter((o) => o.isFavorite)
+export const selectFavoriteCount = createSelector(
+  [selectFavorites],
+  (favorites) => favorites.length
 );
