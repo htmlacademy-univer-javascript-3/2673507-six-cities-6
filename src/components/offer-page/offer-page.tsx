@@ -74,6 +74,15 @@ function OfferPage(): JSX.Element | null {
     dispatch(toggleFavoriteStatusAction({ offerId: offer.id, status }));
   };
 
+  const roundedRating = Math.round(offer.rating);
+
+  const bedroomsText = offer.bedrooms === 1 ? '1 Bedroom' : `${offer.bedrooms} Bedrooms`;
+  const adultsText = offer.maxAdults === 1 ? 'Max 1 adult' : `Max ${offer.maxAdults} adults`;
+
+  const mapOffers = [offer, ...nearPlaces.slice(0, 3)].filter(
+    (item, index, self) => self.findIndex((o) => o.id === item.id) === index
+  );
+
   return (
     <div className="page">
       <header className="header">
@@ -139,7 +148,7 @@ function OfferPage(): JSX.Element | null {
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
-              {offer.images.map((image) => (
+              {offer.images.slice(0, 6).map((image) => (
                 <div
                   key={`${offer.id}-${image}`}
                   className="offer__image-wrapper"
@@ -179,7 +188,7 @@ function OfferPage(): JSX.Element | null {
               </div>
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">
-                  <span style={{ width: `${(offer.rating / 5) * 100}%` }} />
+                  <span style={{ width: `${(roundedRating / 5) * 100}%` }} />
                   <span className="visually-hidden">Rating</span>
                 </div>
                 <span className="offer__rating-value rating__value">
@@ -191,10 +200,10 @@ function OfferPage(): JSX.Element | null {
                   {offer.type}
                 </li>
                 <li className="offer__feature offer__feature--bedrooms">
-                  {offer.bedrooms} Bedrooms
+                  {bedroomsText}
                 </li>
                 <li className="offer__feature offer__feature--adults">
-                  Max {offer.maxAdults} adults
+                  {adultsText}
                 </li>
               </ul>
               <div className="offer__price">
@@ -243,7 +252,7 @@ function OfferPage(): JSX.Element | null {
             </div>
           </div>
           <section className="offer__map map">
-            <Map offers={nearPlaces} />
+            <Map offers={mapOffers} activeOfferId={offer.id} />
           </section>
         </section>
         <div className="container">

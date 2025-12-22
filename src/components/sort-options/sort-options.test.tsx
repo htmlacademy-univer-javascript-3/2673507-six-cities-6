@@ -9,7 +9,7 @@ describe('Компонент: SortOptions', () => {
 
     render(<SortOptions value="Popular" onChange={handleChange} />);
 
-    const sortType = screen.getByText('Popular');
+    const sortType = screen.getAllByText('Popular')[0];
     const optionsList = screen.getByRole('list');
 
     expect(optionsList.className).not.toContain('places__options--opened');
@@ -24,7 +24,7 @@ describe('Компонент: SortOptions', () => {
 
     render(<SortOptions value="Popular" onChange={handleChange} />);
 
-    const sortType = screen.getByText('Popular');
+    const sortType = screen.getAllByText('Popular')[0];
     fireEvent.click(sortType);
 
     const option = screen.getByText('Price: low to high');

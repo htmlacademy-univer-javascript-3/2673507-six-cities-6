@@ -27,7 +27,7 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (!rating || comment.length < 50 || isReviewPosting) {
+    if (!rating || comment.length < 50 || comment.length > 300 || isReviewPosting) {
       return;
     }
 
@@ -43,7 +43,8 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
     setComment('');
   };
 
-  const isSubmitDisabled = !rating || comment.length < 50 || isReviewPosting;
+  const isSubmitDisabled =
+    !rating || comment.length < 50 || comment.length > 300 || isReviewPosting;
 
   return (
     <form
@@ -70,6 +71,7 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
           className="reviews__rating-label form__rating-label"
           title="perfect"
         >
+          <span className="visually-hidden">perfect</span>
           <svg className="form__star-image" width="37" height="33">
             <use href="#icon-star"></use>
           </svg>

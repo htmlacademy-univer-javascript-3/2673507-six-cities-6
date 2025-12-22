@@ -1,15 +1,31 @@
-import { FormEvent, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { FormEvent, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppDispatch } from '../../store';
-import { loginAction } from '../../store/api-actions';
+import { loginAction, logoutAction } from '../../store/api-actions';
+import {
+  selectAuthorizationStatus,
+  selectFavoriteCount,
+  selectUserEmail,
+} from '../../store/selectors';
 
 function LoginPage(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const userEmail = useSelector(selectUserEmail);
+  const favoriteCount = useSelector(selectFavoriteCount);
+  const isAuth = authorizationStatus === 'Auth';
+
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (authorizationStatus === 'Auth') {
+      navigate('/');
+    }
+  }, [authorizationStatus, navigate]);
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
@@ -18,7 +34,10 @@ function LoginPage(): JSX.Element {
       const email = emailRef.current.value;
       const password = passwordRef.current.value;
 
-      if (!password.trim()) {
+      const hasLetter = /[A-Za-z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+
+      if (!password.trim() || !hasLetter || !hasNumber) {
         return;
       }
 
@@ -33,7 +52,7 @@ function LoginPage(): JSX.Element {
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <a className="header__logo-link" href="/">
+              <Link className="header__logo-link" to="/">
                 <img
                   className="header__logo"
                   src="img/logo.svg"
@@ -41,8 +60,49 @@ function LoginPage(): JSX.Element {
                   width="81"
                   height="41"
                 />
-              </a>
+              </Link>
             </div>
+            <nav className="header__nav">
+              <ul className="header__nav-list">
+                {isAuth ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <Link
+                        className="header__nav-link header__nav-link--profile"
+                        to="/favorites"
+                      >
+                        <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                        <span className="header__user-name user__name">
+                          {userEmail}
+                        </span>
+                        <span className="header__favorite-count">
+                          {favoriteCount}
+                        </span>
+                      </Link>
+                    </li>
+                    <li className="header__nav-item">
+                      <button
+                        className="header__nav-link"
+                        style={{ background: 'none', border: 'none' }}
+                        onClick={() => void dispatch(logoutAction())}
+                      >
+                        <span className="header__signout">Sign out</span>
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item user">
+                    <Link
+                      className="header__nav-link header__nav-link--profile"
+                      to="/login"
+                    >
+                      <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                      <span className="header__login">Sign in</span>
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </nav>
           </div>
         </div>
       </header>

@@ -1,17 +1,33 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
+import type { ReactNode } from 'react';
 
 import LoginPage from './login-page';
 
 const mockDispatch = vi.fn();
 const mockNavigate = vi.fn();
 
+type MockState = {
+  authorizationStatus: 'Unknown' | 'Auth' | 'NoAuth';
+  userEmail: string | null;
+  favorites: unknown[];
+};
+
+const mockState: MockState = {
+  authorizationStatus: 'NoAuth',
+  userEmail: null,
+  favorites: [],
+};
+
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
+  useSelector: (selector: (state: MockState) => unknown) =>
+    selector(mockState),
 }));
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
+  Link: ({ children }: { children: ReactNode }) => <a>{children}</a>,
 }));
 
 vi.mock('../../store/api-actions', () => ({

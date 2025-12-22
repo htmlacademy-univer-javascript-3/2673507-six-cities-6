@@ -1,6 +1,20 @@
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch } from '../../store';
+import { logoutAction } from '../../store/api-actions';
+import {
+  selectAuthorizationStatus,
+  selectFavoriteCount,
+  selectUserEmail,
+} from '../../store/selectors';
 
 function NotFoundPage(): JSX.Element {
+  const dispatch = useDispatch<AppDispatch>();
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const userEmail = useSelector(selectUserEmail);
+  const favoriteCount = useSelector(selectFavoriteCount);
+  const isAuth = authorizationStatus === 'Auth';
+
   return (
     <div className="page">
       <header className="header">
@@ -17,6 +31,47 @@ function NotFoundPage(): JSX.Element {
                 />
               </Link>
             </div>
+            <nav className="header__nav">
+              <ul className="header__nav-list">
+                {isAuth ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <Link
+                        className="header__nav-link header__nav-link--profile"
+                        to="/favorites"
+                      >
+                        <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                        <span className="header__user-name user__name">
+                          {userEmail}
+                        </span>
+                        <span className="header__favorite-count">
+                          {favoriteCount}
+                        </span>
+                      </Link>
+                    </li>
+                    <li className="header__nav-item">
+                      <button
+                        className="header__nav-link"
+                        style={{ background: 'none', border: 'none' }}
+                        onClick={() => void dispatch(logoutAction())}
+                      >
+                        <span className="header__signout">Sign out</span>
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item user">
+                    <Link
+                      className="header__nav-link header__nav-link--profile"
+                      to="/login"
+                    >
+                      <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                      <span className="header__login">Sign in</span>
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </nav>
           </div>
         </div>
       </header>
