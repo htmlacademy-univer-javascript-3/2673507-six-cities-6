@@ -8,7 +8,7 @@ import { reducer } from '../../store/reducer';
 import type { OffersState } from '../../store/reducer';
 
 const makeState = (initial?: Partial<OffersState>): OffersState => {
-  const baseState = reducer(undefined, { type: 'UNKNOWN_ACTION' }) as OffersState;
+  const baseState = reducer(undefined, { type: 'UNKNOWN_ACTION' });
   return { ...baseState, ...initial };
 };
 

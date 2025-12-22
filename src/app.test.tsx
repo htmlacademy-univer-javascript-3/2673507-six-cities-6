@@ -28,7 +28,7 @@ vi.mock('./components/not-found-page/not-found-page', () => ({
 }));
 
 const makeState = (initial?: Partial<OffersState>): OffersState => {
-  const baseState = reducer(undefined, { type: 'UNKNOWN_ACTION' }) as OffersState;
+  const baseState = reducer(undefined, { type: 'UNKNOWN_ACTION' });
   return { ...baseState, ...initial };
 };
 

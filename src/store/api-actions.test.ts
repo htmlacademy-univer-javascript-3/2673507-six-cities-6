@@ -11,13 +11,12 @@ import {
   fetchFavoritesAction,
   toggleFavoriteStatusAction,
 } from './api-actions';
+import type { RootState } from './index';
 import { offers } from '../mocks/offers';
 import { reviews } from '../mocks/reviews';
 
 // В этом файле не тестируем операции, которые используют localStorage
 // (checkAuthAction, loginAction, logoutAction).
-
-type RootState = unknown;
 
 describe('Асинхронные действия', () => {
   const makeApi = () => {
@@ -30,7 +29,7 @@ describe('Асинхронные действия', () => {
   it('fetchOffersAction должен запрашивать предложения с API', async () => {
     const { api, mockApi } = makeApi();
     const dispatch = vi.fn();
-    const getState = vi.fn(() => ({} as RootState));
+    const getState = vi.fn<[], RootState>(() => ({} as RootState));
 
     mockApi.onGet('/six-cities/offers').reply(200, offers);
 
@@ -38,17 +37,23 @@ describe('Асинхронные действия', () => {
 
     await thunk(dispatch, getState, api);
 
-    const actions = dispatch.mock.calls.map(([action]) => action);
-
-    expect(actions[0].type).toBe(fetchOffersAction.pending.type);
-    expect(actions[1].type).toBe(fetchOffersAction.fulfilled.type);
-    expect(actions[1].payload).toEqual(offers);
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ type: fetchOffersAction.pending.type })
+    );
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        type: fetchOffersAction.fulfilled.type,
+        payload: offers,
+      })
+    );
   });
 
   it('fetchOfferAction должен запрашивать одно предложение с API', async () => {
     const { api, mockApi } = makeApi();
     const dispatch = vi.fn();
-    const getState = vi.fn(() => ({} as RootState));
+    const getState = vi.fn<[], RootState>(() => ({} as RootState));
 
     const offerId = '1';
     const offer = offers[0];
@@ -61,17 +66,23 @@ describe('Асинхронные действия', () => {
 
     await thunk(dispatch, getState, api);
 
-    const actions = dispatch.mock.calls.map(([action]) => action);
-
-    expect(actions[0].type).toBe(fetchOfferAction.pending.type);
-    expect(actions[1].type).toBe(fetchOfferAction.fulfilled.type);
-    expect(actions[1].payload).toEqual(offer);
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ type: fetchOfferAction.pending.type })
+    );
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        type: fetchOfferAction.fulfilled.type,
+        payload: offer,
+      })
+    );
   });
 
   it('fetchNearbyOffersAction должен запрашивать соседние предложения с API', async () => {
     const { api, mockApi } = makeApi();
     const dispatch = vi.fn();
-    const getState = vi.fn(() => ({} as RootState));
+    const getState = vi.fn<[], RootState>(() => ({} as RootState));
 
     const offerId = '1';
 
@@ -83,17 +94,23 @@ describe('Асинхронные действия', () => {
 
     await thunk(dispatch, getState, api);
 
-    const actions = dispatch.mock.calls.map(([action]) => action);
-
-    expect(actions[0].type).toBe(fetchNearbyOffersAction.pending.type);
-    expect(actions[1].type).toBe(fetchNearbyOffersAction.fulfilled.type);
-    expect(actions[1].payload).toEqual(offers);
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ type: fetchNearbyOffersAction.pending.type })
+    );
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        type: fetchNearbyOffersAction.fulfilled.type,
+        payload: offers,
+      })
+    );
   });
 
   it('fetchCommentsAction должен запрашивать комментарии с API', async () => {
     const { api, mockApi } = makeApi();
     const dispatch = vi.fn();
-    const getState = vi.fn(() => ({} as RootState));
+    const getState = vi.fn<[], RootState>(() => ({} as RootState));
 
     const offerId = '1';
 
@@ -105,17 +122,23 @@ describe('Асинхронные действия', () => {
 
     await thunk(dispatch, getState, api);
 
-    const actions = dispatch.mock.calls.map(([action]) => action);
-
-    expect(actions[0].type).toBe(fetchCommentsAction.pending.type);
-    expect(actions[1].type).toBe(fetchCommentsAction.fulfilled.type);
-    expect(actions[1].payload).toEqual(reviews);
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ type: fetchCommentsAction.pending.type })
+    );
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        type: fetchCommentsAction.fulfilled.type,
+        payload: reviews,
+      })
+    );
   });
 
   it('postCommentAction должен отправлять комментарий на API', async () => {
     const { api, mockApi } = makeApi();
     const dispatch = vi.fn();
-    const getState = vi.fn(() => ({} as RootState));
+    const getState = vi.fn<[], RootState>(() => ({} as RootState));
 
     const commentData = {
       offerId: '1',
@@ -133,17 +156,23 @@ describe('Асинхронные действия', () => {
 
     await thunk(dispatch, getState, api);
 
-    const actions = dispatch.mock.calls.map(([action]) => action);
-
-    expect(actions[0].type).toBe(postCommentAction.pending.type);
-    expect(actions[1].type).toBe(postCommentAction.fulfilled.type);
-    expect(actions[1].payload).toEqual(createdReview);
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ type: postCommentAction.pending.type })
+    );
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        type: postCommentAction.fulfilled.type,
+        payload: createdReview,
+      })
+    );
   });
 
   it('fetchFavoritesAction должен запрашивать избранное с API', async () => {
     const { api, mockApi } = makeApi();
     const dispatch = vi.fn();
-    const getState = vi.fn(() => ({} as RootState));
+    const getState = vi.fn<[], RootState>(() => ({} as RootState));
 
     mockApi
       .onGet('/six-cities/favorite')
@@ -153,17 +182,23 @@ describe('Асинхронные действия', () => {
 
     await thunk(dispatch, getState, api);
 
-    const actions = dispatch.mock.calls.map(([action]) => action);
-
-    expect(actions[0].type).toBe(fetchFavoritesAction.pending.type);
-    expect(actions[1].type).toBe(fetchFavoritesAction.fulfilled.type);
-    expect(actions[1].payload).toEqual(offers);
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ type: fetchFavoritesAction.pending.type })
+    );
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        type: fetchFavoritesAction.fulfilled.type,
+        payload: offers,
+      })
+    );
   });
 
   it('toggleFavoriteStatusAction должен переключать статус избранного через API', async () => {
     const { api, mockApi } = makeApi();
     const dispatch = vi.fn();
-    const getState = vi.fn(() => ({} as RootState));
+    const getState = vi.fn<[], RootState>(() => ({} as RootState));
 
     const data = { offerId: '1', status: 1 as const };
     const updatedOffer = { ...offers[0], isFavorite: true };
@@ -176,10 +211,16 @@ describe('Асинхронные действия', () => {
 
     await thunk(dispatch, getState, api);
 
-    const actions = dispatch.mock.calls.map(([action]) => action);
-
-    expect(actions[0].type).toBe(toggleFavoriteStatusAction.pending.type);
-    expect(actions[1].type).toBe(toggleFavoriteStatusAction.fulfilled.type);
-    expect(actions[1].payload).toEqual(updatedOffer);
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ type: toggleFavoriteStatusAction.pending.type })
+    );
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        type: toggleFavoriteStatusAction.fulfilled.type,
+        payload: updatedOffer,
+      })
+    );
   });
 });
