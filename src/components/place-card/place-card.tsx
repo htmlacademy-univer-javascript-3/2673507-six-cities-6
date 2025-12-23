@@ -41,6 +41,8 @@ function PlaceCard({
     dispatch(toggleFavoriteStatusAction({ offerId: offer.id, status }));
   };
 
+  const roundedRating = Math.round(offer.rating);
+
   return (
     <article
       className={`${cardClassName} place-card`}
@@ -86,7 +88,7 @@ function PlaceCard({
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{ width: `${(offer.rating / 5) * 100}%` }}></span>
+            <span style={{ width: `${(roundedRating / 5) * 100}%` }}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
