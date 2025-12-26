@@ -44,7 +44,7 @@ function SortOptions({ value, onChange }: SortOptionsProps): JSX.Element {
             tabIndex={0}
             onClick={handleSelect(option)}
           >
-            {option}
+            {option === value ? `${option} (current)` : option}
           </li>
         ))}
       </ul>

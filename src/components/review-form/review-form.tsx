@@ -70,6 +70,7 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
           className="reviews__rating-label form__rating-label"
           title="perfect"
         >
+          <span className="visually-hidden">perfect</span>
           <svg className="form__star-image" width="37" height="33">
             <use href="#icon-star"></use>
           </svg>
@@ -89,6 +90,7 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
           className="reviews__rating-label form__rating-label"
           title="good"
         >
+          <span className="visually-hidden">good</span>
           <svg className="form__star-image" width="37" height="33">
             <use href="#icon-star"></use>
           </svg>
@@ -108,6 +110,7 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
           className="reviews__rating-label form__rating-label"
           title="not bad"
         >
+          <span className="visually-hidden">not bad</span>
           <svg className="form__star-image" width="37" height="33">
             <use href="#icon-star"></use>
           </svg>
@@ -127,6 +130,7 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
           className="reviews__rating-label form__rating-label"
           title="badly"
         >
+          <span className="visually-hidden">badly</span>
           <svg className="form__star-image" width="37" height="33">
             <use href="#icon-star"></use>
           </svg>
@@ -146,6 +150,7 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
           className="reviews__rating-label form__rating-label"
           title="terribly"
         >
+          <span className="visually-hidden">terribly</span>
           <svg className="form__star-image" width="37" height="33">
             <use href="#icon-star"></use>
           </svg>
